@@ -3,19 +3,32 @@ package com.danilkomyshev.cardholder;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.danilkomyshev.cardholder.nfc.OutcomingNfcManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class SenderActivity extends AppCompatActivity implements OutcomingNfcManager.NfcActivity {
 
-    private TextView tvOutcomingMessage;
-    private EditText etOutcomingMessage;
+//    private TextView tvOutcomingMessage;
+//    private EditText etOutcomingMessage;
+
+//    TextView btnSetOutcomingMessage = findViewById(R.id.card_item);
+    String outMessage = "Android Engineer" + "\nАскар Касимов" + "\nтел: 8199283746728";
+    ArrayList<String> cards = new ArrayList<>();
+    RecyclerView mMessagesRecycler;
 
     private NfcAdapter nfcAdapter;
 
@@ -23,6 +36,13 @@ public class SenderActivity extends AppCompatActivity implements OutcomingNfcMan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sender);
+        mMessagesRecycler = findViewById(R.id.messages_recycler);
+        FloatingActionButton addButton = findViewById(R.id.addButton);
+
+        mMessagesRecycler.setLayoutManager(new LinearLayoutManager(this));
+        final DataAdapter dataAdapter = new DataAdapter(this, cards);
+        mMessagesRecycler.setAdapter(dataAdapter);
+
 
         if (!isNfcSupported()) {
             Toast.makeText(this, "Nfc is not supported on this device", Toast.LENGTH_SHORT).show();
@@ -38,13 +58,23 @@ public class SenderActivity extends AppCompatActivity implements OutcomingNfcMan
         OutcomingNfcManager outcomingNfccallback = new OutcomingNfcManager(this);
         this.nfcAdapter.setOnNdefPushCompleteCallback(outcomingNfccallback, this);
         this.nfcAdapter.setNdefPushMessageCallback(outcomingNfccallback, this);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(SenderActivity.this, "On development", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mMessagesRecycler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOutcomingMessage();
+            }
+        });
     }
 
     private void initViews() {
-        this.tvOutcomingMessage = findViewById(R.id.tv_out_message);
-        this.etOutcomingMessage = findViewById(R.id.et_message);
-        Button btnSetOutcomingMessage = findViewById(R.id.btn_set_out_message);
-        btnSetOutcomingMessage.setOnClickListener((v) -> setOutGoingMessage());
+        cards.add(outMessage);
     }
 
     @Override
@@ -58,14 +88,15 @@ public class SenderActivity extends AppCompatActivity implements OutcomingNfcMan
         return this.nfcAdapter != null;
     }
 
-    private void setOutGoingMessage() {
-        String outMessage = this.etOutcomingMessage.getText().toString();
-        this.tvOutcomingMessage.setText(outMessage);
-    }
+//    private void setOutGoingMessage() {
+////        String outMessage = this.etOutcomingMessage.getText().toString();
+//        outMessage = "Android Engineer" + "\nАскар Касимов" + "\nтел: 8199283746728";
+////        this.tvOutcomingMessage.setText(outMessage);
+//    }
 
     @Override
     public String getOutcomingMessage() {
-        return this.tvOutcomingMessage.getText().toString();
+        return this.outMessage;
     }
 
     @Override
@@ -76,4 +107,5 @@ public class SenderActivity extends AppCompatActivity implements OutcomingNfcMan
         runOnUiThread(() ->
                 Toast.makeText(SenderActivity.this, R.string.message_beaming_complete, Toast.LENGTH_SHORT).show());
     }
+
 }
