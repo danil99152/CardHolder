@@ -5,6 +5,10 @@
     <string name="label_your_message">Outgoing NFC message:</string>
     <string name="title_btn_set">Set Message</string>
     <string name="incoming_nfc_message">Принятая визитка:</string>
-    <string name="textview">TextView</string>
+    <string name="textview">Визитка неопознана</string>
     <string name="card_name">Card</string>
+    <string name="name">Имя</string>
+    <string name="mob">Номер телефона</string>
+    <string name="work">Должность</string>
+    <string name="button"> Подготовить к отправке </string>
 </resources>
